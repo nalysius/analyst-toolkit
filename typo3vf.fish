@@ -9,15 +9,20 @@ end
 
 set typo3_url $argv[1]
 
-# The path (on the remote server & in the git repository) of the file to use
-# to check the hash
-set file_path 'typo3/sysext/core/Resources/Public/JavaScript/SecurityUtility.js'
+# A list of paths where the version is printed
+set file_paths 'typo3/sysext/install/composer.json' 'typo3/sysext/linkvalidator/composer.json' 'typo3/sysext/filelist/composer.json' 'typo3/sysext/t3editor/composer.json' 'typo3/sysext/extensionmanager/composer.json' 'typo3/sysext/opendocs/composer.json'
 
-# The hash of the file on the remote server
-set the_hash (curl -ks $typo3_url/$file_path | shasum -a 256 | cut -d ' ' -f 1)
+# Test for all composer.json in case some of them are missing
+for file_path in $file_paths
+    echo 'Testing path /'$file_path
+    # "typo3/cms-core": "x.y.z"
+    set typo3_version (curl -sk $typo3_url/$file_path | grep -Po '(?<="typo3/cms-core": ")[0-9.]+(?=")')
 
-# Execute fingerprint-file-git.fish to find the tags in which the file
-# is exactly the same
-set script_dir (realpath (dirname (status --current-filename)))
-$script_dir/fingerprint-file-git.fish "$file_path" "$the_hash"
+    if test -n $typo3_version
+	echo 'Version found:' $typo3_version
+	exit
+    end
+end
+
+echo 'Version not found. You could try to find it by fingerprinting a file against the Git repository.
 
