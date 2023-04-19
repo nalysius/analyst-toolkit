@@ -18,3 +18,9 @@ repository
 Fingerprint-file-git is a generic script used to fingerprint a software.
 It takes a path to a file, the expected sha256 hash, and it loops over all
 of the Git tags to find which tag matches.
+
+## Fingerprint File Git Commit
+
+Fingerprint-file-git-commit is a generic script used to fingerprint a software.
+It takes a path to a file, the expected sha256 hash, and it loops over all
+of the Git commit to find which commits matches.
